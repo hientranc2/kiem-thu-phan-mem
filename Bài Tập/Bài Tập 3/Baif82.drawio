@@ -1,0 +1,64 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36" version="28.2.4">
+  <diagram name="Trang-1" id="wwwVoZmC-o7m2Ep-zocp">
+    <mxGraphModel dx="1351" dy="920" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="LrAFaFym2a9N2Pai8mZG-1" value="User" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=65;" vertex="1" parent="1">
+          <mxGeometry x="20" y="20" width="150" height="448" as="geometry" />
+        </mxCell>
+        <mxCell id="LrAFaFym2a9N2Pai8mZG-2" value="GUI" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=65;" vertex="1" parent="1">
+          <mxGeometry x="251" y="20" width="150" height="448" as="geometry" />
+        </mxCell>
+        <mxCell id="LrAFaFym2a9N2Pai8mZG-3" value="Query Handler" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=65;" vertex="1" parent="1">
+          <mxGeometry x="474" y="20" width="150" height="448" as="geometry" />
+        </mxCell>
+        <mxCell id="LrAFaFym2a9N2Pai8mZG-4" value="Database" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};size=65;" vertex="1" parent="1">
+          <mxGeometry x="674" y="20" width="150" height="448" as="geometry" />
+        </mxCell>
+        <mxCell id="LrAFaFym2a9N2Pai8mZG-5" value="1. Gửi yêu cầu (Query)" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" edge="1" parent="1" source="LrAFaFym2a9N2Pai8mZG-1" target="LrAFaFym2a9N2Pai8mZG-2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="219" y="123" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LrAFaFym2a9N2Pai8mZG-6" value="2. Chuyển tiếp Query" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" edge="1" parent="1" source="LrAFaFym2a9N2Pai8mZG-2" target="LrAFaFym2a9N2Pai8mZG-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="446" y="171" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LrAFaFym2a9N2Pai8mZG-7" value="3. Gửi SQL" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;endArrow=block;" edge="1" parent="1" source="LrAFaFym2a9N2Pai8mZG-3" target="LrAFaFym2a9N2Pai8mZG-4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="658" y="219" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LrAFaFym2a9N2Pai8mZG-8" value="4. Trả dữ liệu" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" edge="1" parent="1" source="LrAFaFym2a9N2Pai8mZG-4" target="LrAFaFym2a9N2Pai8mZG-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="661" y="267" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LrAFaFym2a9N2Pai8mZG-9" value="5. Kết quả" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" edge="1" parent="1" source="LrAFaFym2a9N2Pai8mZG-3" target="LrAFaFym2a9N2Pai8mZG-2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="449" y="315" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="LrAFaFym2a9N2Pai8mZG-10" value="6. Hiển thị kết quả" style="verticalAlign=bottom;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;dashed=1;dashPattern=2 3;endArrow=block;" edge="1" parent="1" source="LrAFaFym2a9N2Pai8mZG-2" target="LrAFaFym2a9N2Pai8mZG-1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="222" y="363" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
