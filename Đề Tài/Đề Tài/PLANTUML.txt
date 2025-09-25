@@ -1,0 +1,287 @@
+PLANTUML DANH SÁCH SẢN PHẨM
+
+@startuml
+actor Buyer
+boundary ProductCatalogPage as B1
+control ProductController as C1
+entity Product as E1
+database ProductTable as DB1
+
+Buyer -> B1 : Mở danh sách sản phẩm
+B1 -> C1 : Lấy danh sách sản phẩm
+C1 -> E1 : Request product data
+E1 -> DB1 : Query product info
+DB1 --> E1 : Trả dữ liệu sản phẩm
+E1 --> C1 : Trả dữ liệu sản phẩm
+C1 --> B1 : Hiển thị sản phẩm
+
+Buyer -> B1 : Lọc hoặc so sánh sản phẩm
+B1 -> C1 : Request dữ liệu lọc/so sánh
+C1 -> E1 : Request filtered data
+E1 -> DB1 : Query dữ liệu lọc
+DB1 --> E1 : Trả dữ liệu
+E1 --> C1 : Trả dữ liệu lọc
+C1 --> B1 : Hiển thị kết quả lọc
+@enduml
+
+
+PLANTUML ĐÁNH GIÁ SẢN PHẨM
+
+
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Clothify - C4 Level 3 (Nested Boundaries: SPA + API + DB)
+
+' --- System boundary ---
+Container_Boundary(clothify, "Clothify System") {
+
+  ' --- SPA --- 
+  Container(spa, "Clothify SPA", "React.js", "Giao diện web cho người dùng")
+
+  ' --- API boundary --- 
+  Container_Boundary(api, "Clothify API") {
+    Component(api_gateway, "API Gateway", "REST/GraphQL", "Điểm vào duy nhất cho SPA")
+    Component(product, "Product Service", "Service", "Quản lý sản phẩm")
+    Component(cart, "Cart Service", "Service", "Quản lý giỏ hàng")
+    Component(payment, "Payment Service", "Service", "Thanh toán & đơn hàng")
+    Component(inventory, "Inventory Service", "Service", "Quản lý tồn kho")
+    Component(rating, "Rating Service", "Service", "Đánh giá sản phẩm")
+    Component(access, "Access Control Service", "Service", "Quản lý người dùng & phân quyền")
+
+    ' --- Database boundary (nested inside API) --- 
+    Container_Boundary(db, "Clothify Database") {
+      ComponentDb(product_db, "product_table", "Table", "Lưu sản phẩm")
+      ComponentDb(cart_db, "cart_table", "Table", "Lưu giỏ hàng")
+      ComponentDb(order_db, "order_table", "Table", "Lưu đơn hàng & thanh toán")
+      ComponentDb(inventory_db, "inventory_table", "Table", "Lưu tồn kho")
+      ComponentDb(rating_db, "rating_table", "Table", "Lưu đánh giá")
+      ComponentDb(user_db, "user_table", "Table", "Lưu thông tin người dùng")
+    }
+  }
+}
+
+' --- Relations ---
+Rel(spa, api_gateway, "HTTP(S) calls")
+
+Rel(api_gateway, product, "routes to")
+Rel(api_gateway, cart, "routes to")
+Rel(api_gateway, payment, "routes to")
+Rel(api_gateway, inventory, "routes to")
+Rel(api_gateway, rating, "routes to")
+Rel(api_gateway, access, "routes to")
+
+Rel(product, product_db, "CRUD")
+Rel(cart, cart_db, "CRUD")
+Rel(payment, order_db, "CRUD")
+Rel(inventory, inventory_db, "CRUD")
+Rel(rating, rating_db, "CRUD")
+Rel(access, user_db, "CRUD")
+
+' --- Add the missing relations between components ---
+Rel(cart, product, "Check product info")
+Rel(payment, cart, "Validate order")
+Rel(payment, inventory, "Update stock")
+Rel(rating, product, "Attach rating")
+
+' --- Event Bus connection --- 
+Container(eventbus, "Event Bus (Kafka/RabbitMQ)", "Messaging", "Handles events asynchronously")
+
+Rel(payment, eventbus, "Publish events: OrderPaid, PaymentConfirmed")
+Rel(access, eventbus, "Publish UserRegistered, UserRoleChanged")
+
+@enduml
+
+
+PLANTUML QUẢN LÝ KHO
+
+@startuml
+actor SysAdmin
+boundary AdminDashboard
+control InventoryController
+entity Inventory
+database InventoryDB
+
+SysAdmin -> AdminDashboard : Mở quản lý kho
+AdminDashboard -> InventoryController : Thêm/Sửa/Xóa kho
+InventoryController -> Inventory : Update entity
+Inventory -> InventoryDB : CRUD
+InventoryDB --> Inventory : Xác nhận
+Inventory --> InventoryController : Xác nhận
+InventoryController --> AdminDashboard : Hiển thị kết quả
+@enduml
+
+
+
+PLANTUML GIỎ HÀNG
+
+@startuml
+actor Buyer
+boundary CartPage
+control CartController
+entity Cart
+database CartDB
+
+Buyer -> CartPage : Thêm sản phẩm vào giỏ
+CartPage -> CartController : Add product
+CartController -> Cart : Cập nhật giỏ
+Cart -> CartDB : Lưu giỏ hàng
+CartDB --> Cart : Xác nhận
+Cart --> CartController : Xác nhận
+CartController --> CartPage : Cập nhật giỏ hàng
+
+Buyer -> CartPage : Chỉnh sửa/xóa sản phẩm
+CartPage -> CartController : Update cart
+CartController -> Cart : Update entity
+Cart -> CartDB : Cập nhật database
+CartDB --> Cart : Xác nhận
+Cart --> CartController : Xác nhận
+CartController --> CartPage : Hiển thị giỏ mới
+@enduml
+
+
+PLANTUML PHÂN QUYỀN TRUY CẬP
+
+@startuml
+actor Buyer
+actor SysAdmin
+boundary LoginPage as B1
+control AuthController as C1
+entity User as E1
+database UserTable as DB1
+
+Buyer -> B1 : Đăng nhập
+B1 -> C1 : Xác thực
+C1 -> E1 : Lấy thông tin user
+E1 -> DB1 : Query user
+DB1 --> E1 : Trả dữ liệu
+E1 --> C1 : Trả thông tin user
+C1 --> B1 : Xác thực thành công/ thất bại
+B1 -> Buyer : Chuyển hướng tới Product Catalog
+
+SysAdmin -> B1 : Đăng nhập
+B1 -> C1 : Xác thực
+C1 -> E1 : Lấy thông tin user
+E1 -> DB1 : Query user
+DB1 --> E1 : Trả dữ liệu
+E1 --> C1 : Trả thông tin user
+C1 --> B1 : Xác thực thành công/ thất bại
+B1 -> SysAdmin : Chuyển hướng tới Admin Dashboard
+@enduml
+
+
+PLANTUML THANH TOÁN
+
+@startuml
+actor Buyer
+boundary PaymentPage as B1
+control PaymentController as C1
+control InventoryController as C2
+entity Cart as E1
+entity Order as E2
+entity Inventory as E3
+database CartTable as DB1
+database OrderTable as DB2
+database InventoryTable as DB3
+
+Buyer -> B1 : Click Thanh toán
+B1 -> C1 : Xử lý đơn hàng
+C1 -> E1 : Lấy thông tin giỏ
+E1 -> DB1 : Query giỏ hàng
+DB1 --> E1 : Trả dữ liệu
+E1 --> C1
+
+C1 -> C2 : Kiểm tra tồn kho
+C2 -> E3 : Validate stock
+E3 -> DB3 : Query/update stock
+DB3 --> E3 : Xác nhận
+E3 --> C2
+C2 --> C1
+
+C1 -> E2 : Tạo đơn hàng
+E2 -> DB2 : Lưu đơn hàng
+DB2 --> E2 : Xác nhận
+E2 --> C1
+C1 --> Buyer : Gửi email xác nhận
+@enduml
+
+
+PLANTUML DEPLOYMENT VIEW
+@startuml
+!define RECTANGLE class
+left to right direction
+
+' Client & CDN
+node "Client Device" as Client {
+    RECTANGLE "Web Browser / Mobile App" as FrontendApp
+}
+node "CDN" as CDNNode {
+    RECTANGLE "Cache Frontend Assets" as CDNCache
+}
+
+' Load Balancer
+node "Load Balancer" as LB {
+}
+
+' Web Server Cluster
+node "Web Server Cluster" as WebCluster {
+    RECTANGLE "Frontend Server" as Frontend
+}
+
+' Application Server Cluster
+node "Application Server Cluster" as AppCluster {
+    RECTANGLE "Product Service" as ProductService
+    RECTANGLE "Cart Service" as CartService
+    RECTANGLE "Order Service" as OrderService
+    RECTANGLE "Inventory Service" as InventoryService
+    RECTANGLE "Rating Service" as RatingService
+}
+
+' Cache Server
+node "Cache Server" as Cache {
+    RECTANGLE "Redis / Memcached" as CacheService
+}
+
+' Database Cluster
+node "Database Cluster" as DBCluster {
+    RECTANGLE "Database Master" as DBMaster
+    RECTANGLE "Database Slave" as DBSlave
+}
+
+' Auxiliary Servers
+node "Email Server" as EmailServer {
+    RECTANGLE "SMTP Service" as SMTP
+}
+node "Auth Server" as AuthServer {
+    RECTANGLE "Authentication / Authorization" as AuthService
+}
+
+' Connections
+Client --> CDNCache : Load frontend assets
+CDNCache --> Frontend : HTTP/HTTPS
+Client --> LB : HTTP/HTTPS requests
+LB --> Frontend : Distribute requests
+
+Frontend --> AuthService : Login / Token verification
+Frontend --> ProductService : API Calls
+Frontend --> CartService : API Calls
+Frontend --> OrderService : API Calls
+Frontend --> InventoryService : API Calls
+Frontend --> RatingService : API Calls
+
+ProductService --> CacheService : Read/Write cache
+CartService --> CacheService : Read/Write cache
+OrderService --> CacheService : Optional cache
+
+ProductService --> DBMaster : CRUD
+CartService --> DBMaster : CRUD
+OrderService --> DBMaster : CRUD
+InventoryService --> DBMaster : CRUD
+RatingService --> DBMaster : CRUD
+
+DBMaster --> DBSlave : Replication
+OrderService --> SMTP : Send confirmation email
+@enduml
+
